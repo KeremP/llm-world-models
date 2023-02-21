@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import openai
 from openai.embeddings_utils import get_embedding
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_KEY")
+openai.api_key = os.getenv("OPENAI_SECRET_KEY")
 
 
 PROMPT = """For each source below, extract three facts. Product one list for each source. Each list should follow the form:
@@ -20,7 +20,7 @@ def extract_evidence(chunks: List[str]) -> List[Evidence]:
     Returns a list of `Evidence` objects with each fact and their source
     """
     chunks = ["*"+chunk for chunk in chunks]
-    prompt = PROMPT + "\n\n" + "\n".join(chunks) + "\n\n"
+    prompt = PROMPT + "\n\n" + "\n".join(chunks) + "\n"
 
     results = openai.Completion.create(
         model="text-davinci-003",
@@ -28,8 +28,11 @@ def extract_evidence(chunks: List[str]) -> List[Evidence]:
         max_tokens=500,
         temperature=0
     )
-
-    facts = results.split("\n\n")
+    print(prompt)
+    print("\n")
+    print(results)
+    results = results.choices[0].text
+    facts = results.split("\n")
     evidence = []
     for i,fact in enumerate(facts):
         # TODO: should ensure results are in order of context

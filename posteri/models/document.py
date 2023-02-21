@@ -1,10 +1,11 @@
 from typing import List
+from pydantic import BaseModel
 
-class Belief:
+class Belief(BaseModel):
     embedding: List[float]
     belief: str
     confidence: float
 
-class Evidence:
+class Evidence(BaseModel):
     fact: str
     source: str

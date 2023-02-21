@@ -1,0 +1,1 @@
+from posteri.embeddings import embedding
