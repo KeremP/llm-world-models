@@ -9,7 +9,7 @@ load_dotenv()
 openai.api_key = os.getenv("OPENAI_SECRET_KEY")
 
 
-PROMPT = """For each source below, extract three facts. Product one list for each source. Each list should follow the form:
+PROMPT = """For each source separated by *, extract three facts. Produce one list for each source. Each list should follow the form:
 Source: {source_title}
 Facts: {extracted_facts}"""
 
