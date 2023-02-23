@@ -24,3 +24,14 @@ Belief:
 {belief}
 
 Answer (yes / no):"""
+
+NEGATE_PROMPT = """Negate the following statements.
+
+Statements:
+{beliefs}
+
+A:"""
+
+POSTERIOR_PROMPT = """{beliefs}
+
+Would {evidence} be true? (Yes / No):"""
