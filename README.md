@@ -7,7 +7,7 @@ run `pip install -r requirements.txt` and create a `.env` file with your `OPENAI
 
 The `example_*.py` scripts can be used as an entry point.
 
-This module is currently a WIP and will soon be integrated into Eroteme's tech stack where we are building AI tools for recruiters.
+The `agent` directory currently has an experimental agent that can incremntally update its world model as it chats with a user.
 
 ## Preview results (WIP)
 
