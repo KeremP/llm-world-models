@@ -27,7 +27,7 @@ def create_beliefs(context=CONTEXT):
     return out
 
 BELIEFS = create_beliefs()
-
+# TODO: cache emebedding requests so that tests do not incur costs
 class TestEvidence(object):
 
     def test_create_collection(self):

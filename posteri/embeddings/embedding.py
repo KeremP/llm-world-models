@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from typing import List
 from ..models.document import Evidence, Belief
 from ..utils.chroma_utils import search_collection
@@ -49,10 +50,10 @@ def create_belief(belief: str, confidence: float) -> Belief:
     obj = Belief(embedding=embedding, belief=belief, confidence=confidence)
     return obj
 
-def get_confidence(belief: str, collection) -> float:
-    context_results = search_collection(belief, collection)
-
-    context = [] #TODO: parse results
+def get_confidence(belief: str, collection, **kwargs) -> float:
+    context_results = search_collection(belief, collection, **kwargs)
+    docs = context_results['documents'][0]
+    context = "\n".join(["- "+d for d in docs]) #TODO: parse results
 
     prompt = PromptTemplate(
         input_variables=['context','belief'],
@@ -66,7 +67,13 @@ def get_confidence(belief: str, collection) -> float:
         temperature=0,
         logprobs=5
     )
-    return results
+    log_probs = results.choices[0]['logprobs']['token_logprobs']
+    tokens: list = results.choices[0]['logprobs']['tokens']
+    token = results.choices[0]['text'].strip("\n")
+    idx = tokens.index(token)
+    log_prob = log_probs[idx]
+    confidence = np.e**log_prob
+    return confidence
 
 
     
