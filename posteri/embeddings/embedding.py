@@ -26,6 +26,8 @@ def get_proba(results):
     idx = tokens.index(token)
     log_prob = log_probs[idx]
     proba = np.e**log_prob
+    if "no" in token.lower():
+        proba = 1 - proba
     return proba, token
 
 def get_confidence(belief: str, collection, **kwargs) -> float:
@@ -48,8 +50,7 @@ def get_confidence(belief: str, collection, **kwargs) -> float:
     print(prompt_formatted)
     confidence, token = get_proba(results)
     print(token)
-    if "no" in token.lower():
-        confidence = 1 - confidence
+    
     if confidence > .90: confidence = .90
     return confidence
 
@@ -96,7 +97,7 @@ def calculate_posterior(beliefs: List[str], evidence: str, confidence: float) ->
 
     prob_evidence = (confidence * prob_evidence_belief) + (not_confidence * prob_evidence_not_belief)
 
-    posterior = max(confidence * prob_evidence_belief / prob_evidence, .95)
+    posterior = min(confidence * prob_evidence_belief / prob_evidence, .95)
 
     return posterior
 

@@ -14,6 +14,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 CONTEXT = [
     ("Kerem is from Turkey", 1.0),
     ("Kerem likes to cook", .90),
+    ("Kerem does not like siracha", .75),
+    ("Kerem likes curry", .8)
 ]
 
 def create_beliefs(context=CONTEXT):
@@ -28,7 +30,7 @@ def create_beliefs(context=CONTEXT):
 BELIEFS = create_beliefs()
 docstore = build_docstore(BELIEFS)
 
-confidence = get_confidence("Kerem likes spicy food", docstore, embedding_func=get_embedding, num_results=2, engine="text-embedding-ada-002")
+confidence = get_confidence("Kerem likes spicy food", docstore, embedding_func=get_embedding, num_results=4, engine="text-embedding-ada-002")
 print(confidence)
 
 posterior = calculate_posterior(["Kerem likes spicy food"], "Kerem ordered spicy gumbo", confidence)
