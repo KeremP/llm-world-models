@@ -5,7 +5,7 @@ This repo is inspired by the [tweet](https://twitter.com/evanjconrad/status/1627
 
 run `pip install -r requirements.txt` and create a `.env` file with your `OPENAI_API_KEY` for use with Langchain.
 
-The `example_*.py` scripts can be used an entry point.
+The `example_*.py` scripts can be used as an entry point.
 
 This module is currently a WIP and will soon be integrated into Eroteme's tech stack where we are building AI tools for recruiters.
 
