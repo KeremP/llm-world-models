@@ -1,48 +1,17 @@
 import os
 import numpy as np
 from typing import List
-from ..models.document import Evidence, Belief
+from ..models.document import Belief
 from ..utils.chroma_utils import search_collection
 from ..prompts.prompts import BELIEF_PROMPT, NEGATE_PROMPT, POSTERIOR_PROMPT
 
 from dotenv import load_dotenv
 import openai
 from openai.embeddings_utils import get_embedding
-from langchain import OpenAI, PromptTemplate
-from langchain.chains.llm import LLMChain
+from langchain import PromptTemplate
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
-
-PROMPT = """For each source separated by *, extract three facts. Produce one list for each source. Do not reference other sources in the list. Each list should be separated with <[]>:"""
-
-def extract_evidence(chunks: List[str]) -> List[Evidence]:
-    """
-    Extract evidence/facts from chunks of text using a call to the LLM
-    
-    Returns a list of `Evidence` objects with each fact and their source
-    """
-    chunks = ["*"+chunk for chunk in chunks]
-    prompt = PROMPT + "\n\n" + "\n".join(chunks) + "\n"
-
-    results = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
-        max_tokens=500,
-        temperature=0
-    )
-    print(prompt)
-    print("\n")
-    print(results)
-    results = results.choices[0].text
-    facts = results.split("\n")
-    evidence = []
-    for i,fact in enumerate(facts):
-        # TODO: should ensure results are in order of context
-        parsed_facts = fact.split("\n")[2:]
-        evidence+=[Evidence(fact=f[2:].strip(), source=chunks[i].strip("*")) for f in parsed_facts]
-    return evidence
 
 
 def create_belief(belief: str, confidence: float) -> Belief:

@@ -4,8 +4,6 @@ import openai
 from openai.embeddings_utils import get_embedding
 from dotenv import load_dotenv
 load_dotenv()
-
-from posteri.embeddings import embedding
 from posteri.models.document import Belief
 from posteri.utils.chroma_utils import create_collection, build_docstore, search_collection
 import pytest
