@@ -73,6 +73,7 @@ def get_confidence(belief: str, collection, **kwargs) -> float:
     idx = tokens.index(token)
     log_prob = log_probs[idx]
     confidence = np.e**log_prob
+    if confidence > .90: confidence = .90
     return confidence
 
 
