@@ -1,17 +1,20 @@
 import os
 from typing import List
-from ..models.document import Evidence
+from ..models.document import Evidence, Belief
+from ..utils.chroma_utils import search_collection
+from ..prompts.prompts import BELIEF_PROMPT
 
 from dotenv import load_dotenv
 import openai
 from openai.embeddings_utils import get_embedding
+from langchain import OpenAI, PromptTemplate
+from langchain.chains.llm import LLMChain
+
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_SECRET_KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-PROMPT = """For each source separated by *, extract three facts. Produce one list for each source. Each list should follow the form:
-Source: {source_title}
-Facts: {extracted_facts}"""
+PROMPT = """For each source separated by *, extract three facts. Produce one list for each source. Do not reference other sources in the list. Each list should be separated with <[]>:"""
 
 def extract_evidence(chunks: List[str]) -> List[Evidence]:
     """
@@ -39,4 +42,33 @@ def extract_evidence(chunks: List[str]) -> List[Evidence]:
         parsed_facts = fact.split("\n")[2:]
         evidence+=[Evidence(fact=f[2:].strip(), source=chunks[i].strip("*")) for f in parsed_facts]
     return evidence
+
+
+def create_belief(belief: str, confidence: float) -> Belief:
+    embedding = get_embedding(belief, engine="text-embedding-ada-002")
+    obj = Belief(embedding=embedding, belief=belief, confidence=confidence)
+    return obj
+
+def get_confidence(belief: str, collection) -> float:
+    context_results = search_collection(belief, collection)
+
+    context = [] #TODO: parse results
+
+    prompt = PromptTemplate(
+        input_variables=['context','belief'],
+        template=BELIEF_PROMPT
+    )
+    
+    prompt_formatted = prompt.format(context=context, belief=belief)
+    results = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=prompt_formatted,
+        temperature=0,
+        logprobs=5
+    )
+    return results
+
+
+    
+    
 
